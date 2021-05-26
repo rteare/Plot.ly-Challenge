@@ -6,15 +6,15 @@ function plot(id) {
         // console.log(data);
 
         // filter data by id
-        var results = data.samples.filter(sample => sample.id.toString() === id)[0];
+        var samples = data.samples.filter(sample => sample.id === id)[0];
        
         // set variables to identify the top 10
-        var value = results.sample_values;
-        var id = results.otu_ids;
-        var label = results.otu_labels;
-        var top_values = value.slice(0,10).reverse();
-        var top_id = id.slice(0,10).reverse();
-        var top_label = label.slice(0,10).reverse();
+        // var value = samples.sample_values;
+        // var id = samples.otu_ids;
+        // var label = samples.otu_labels;
+        var top_values = samples.sample_values.slice(0,10).reverse();
+        var top_id = samples.otu_ids.slice(0,10).reverse();
+        var top_label = samples.otu_labels.slice(0,10).reverse();
         var formated_top_id = top_id.map(otuid => `OTU: ${otuid}`);
                     
         // Create Bar Chart
@@ -29,10 +29,6 @@ function plot(id) {
         // Define the plot layout
         var layout_barchart = {
             title: "Top 10 Microbial Species (OTUs)",
-            xaxis: {
-                title: "Sample Values",
-                tickmode: "linear"
-            },
             height: 700,
             width: 500,
         };
@@ -45,13 +41,13 @@ function plot(id) {
 
         // Create bubble chart
         var trace_bubblechart = {
-            x: id,
-            y: value,
-            text: label,
+            x: samples.otu_ids,
+            y: samples.sample_values,
+            text: samples.otu_labels,
             mode: "markers",
             marker: {
-                color: id,
-                size: value
+                color: samples.otu_ids,
+                size: samples.sample_values
             },
 
         };
@@ -66,6 +62,7 @@ function plot(id) {
         // Create the data array for our plot
         var data_bubblechart = [trace_bubblechart];
 
+        // Plot the chart to "bubble"
         Plotly.newPlot("bubble", data_bubblechart, layout_bubblechart);
      
     });
@@ -75,16 +72,17 @@ function plot(id) {
 function metadata(id) {
     // Use d3.json() to fetch data from JSON file
     // Incoming data is internally referred to as data
-    d3.json("sample.json").then((data) => {
+    d3.json("samples.json").then((data) => {
         
         // filter data by id
         var meta = data.metadata.filter(data => data.id.toString() === id)[0];
         // console.log(meta);
 
+        // refrence "#sample-metadata" to load data
         var sample_metadata = d3.select("#sample-metadata");
         sample_metadata.html("");
 
-        Object.entries(meta).forEach((key) => {
+        Object.entries(meta).forEach(([key, value]) => {
             // console.log(key, value);
             sample_metadata.append("h5").text(`${key}: ${value}`);
         });
@@ -113,6 +111,7 @@ function init() {
             dropdown.append("option").text(name).property("value");
         });
 
+        // display plots and data
         var initialsample = data.names[0];
         plot(initialsample);
         metadata(initialsample);
