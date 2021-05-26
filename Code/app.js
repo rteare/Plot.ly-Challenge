@@ -79,20 +79,14 @@ function metadata(id) {
         // console.log(meta);
 
         // refrence "#sample-metadata" to load data
-        var sample_metadata = d3.select("#sample-metadata");
-        sample_metadata.html("");
+        var dem_metadata = d3.select("#sample-metadata");
+        dem_metadata.html("");
 
         Object.entries(meta).forEach(([key, value]) => {
             // console.log(key, value);
-            sample_metadata.append("h5").text(`${key}: ${value}`);
+            dem_metadata.append("h5").text(`${key}: ${value}`);
         });
     });
-}
-
-// create change event
-function optionChanged(id) {
-    plot(id);
-    metadata(id);
 }
 
 // create initial dataset
@@ -112,10 +106,16 @@ function init() {
         });
 
         // display plots and data
-        var initialsample = data.names[0];
-        plot(initialsample);
-        metadata(initialsample);
+        var initialdata = data.names[0];
+        plot(initialdata);
+        metadata(initialdata);
     });
+}
+
+// create change event
+function optionChanged(id) {
+    plot(id);
+    metadata(id);
 }
 
 init();
